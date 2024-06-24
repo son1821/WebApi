@@ -1,6 +1,6 @@
 
-using Microsoft.Extensions.Options;
-using MongoDB.Driver;
+using Microsoft.EntityFrameworkCore;
+
 using WebApplication1.NewFolder;
 
 namespace WebApplication1
@@ -9,16 +9,14 @@ namespace WebApplication1
     {
         public static void Main(string[] args)
         {
-
+         
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+      
+            builder.Services.AddDbContext<ProductDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("ProductDbContext")));
 
-            //Register Mongodb
-            builder.Services.Configure<DatabaseSettings>(
-                builder.Configuration.GetSection("DatabaseSettings"));
-            builder.Services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
-            builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(builder.Configuration.GetValue<string>("DatabaseSettings:ConnectionString")));
             builder.Services.AddScoped<IProductServices, ProductServices>();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

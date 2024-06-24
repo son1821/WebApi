@@ -1,19 +1,22 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿
+
+
+
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication1.NewFolder
 {
-    [BsonIgnoreExtraElements]
+    [Table("products")]
     public class Product
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = string.Empty;
+        [Key]
+        public int Id { get; set; } 
 
-        [BsonElement("name")]
+        [Required]
         public string Name { get; set; } = string.Empty;
 
-        [BsonElement("price")]
+        [Required]
         public double Price { get; set; }
     }
 }

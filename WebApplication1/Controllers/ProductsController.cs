@@ -26,33 +26,36 @@ namespace WebApplication1.Controllers
         }
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(List<Product>), (int)HttpStatusCode.OK)]
-        public ActionResult<Product> GetById(string id)
+        public ActionResult<Product> GetById(int id)
         {
             return _services.GetById(id);
         }
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public ActionResult<Product> CreateProduct([FromBody]Product product)
+        public ActionResult CreateProduct([FromBody]Product product)
         {
 
-            return _services.Create(product);
+            _services.Create(product);
+            return Ok();
         }
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public ActionResult UpdateProduct(string id,[FromBody] Product product)
+        public ActionResult UpdateProduct(int id,[FromBody] Product product)
         {
-           if(GetById(id) == null) {
-            return NotFound($"Không tìm thấy product {id}");
-            } 
-            _services.Update(id,product);
+           if(GetById(id) != null)
+            {
+                _services.Update(id,product);
+
+            }
             return NoContent();
+
         }
         [HttpDelete("{id}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public ActionResult DeleteProduct(string id)
+        public ActionResult DeleteProduct(int id)
         {
             if (GetById(id) == null)
             {

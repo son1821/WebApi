@@ -2,10 +2,10 @@
 {
     public interface IProductServices
     {
-        Product GetById(string id);
+        Product GetById(int id);
         List<Product> GetProducts();
-        Product Create(Product product);
-        void Update(string id,Product product);
-        void Delete(string id);    
+        void Create(Product product);
+        void Update(int id,Product product);
+        void Delete(int id);    
     }
 }

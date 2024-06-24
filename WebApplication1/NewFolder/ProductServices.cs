@@ -1,44 +1,61 @@
 ﻿
-using MongoDB.Driver;
+
+
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace WebApplication1.NewFolder
 {
     public class ProductServices : IProductServices
     {
-        private readonly IMongoCollection<Product> _products;
+        private readonly ProductDbContext _productDbContext;
 
-        public ProductServices(IDatabaseSettings settings, IMongoClient mongoClient) {
-        
-        var database = mongoClient.GetDatabase(settings.DatabaseName);
-            _products = database.GetCollection<Product>(settings.ColectionName);
-        }
-        public Product Create(Product product)
+        public ProductServices(ProductDbContext productDbContext)
         {
-           _products.InsertOne(product);
-            return product;
+            _productDbContext = productDbContext;
         }
 
-        public void Delete(string id)
+        public void Create(Product product)
         {
-           _products.DeleteOne(s => s.Id == id);
-
-        }
-
-        public Product GetById(string id)
-        {
-            return _products.Find(s => s.Id == id).FirstOrDefault();
             
+            _productDbContext.Products.Add(product);
+           
+            _productDbContext.SaveChanges();
+         
+        }
+
+        public void Delete(int id)
+        {
+           var result = _productDbContext.Remove(id);
+            _productDbContext.SaveChanges();
+
+        }
+
+        public Product GetById(int id)
+        {
+          var product = _productDbContext.Products.Find(id);
+            if (product == null)
+            {
+                return null ;
+            }
+            return product;
         }
 
         public List<Product> GetProducts()
         {
-           return _products.Find(s => true).ToList();
+           return _productDbContext.Products.ToList();
         }
 
-        public void Update(string id, Product product)
+        public void Update(int id,Product updateProduct)
         {
-            var filter = Builders<Product>.Filter.Eq(p => p.Id, id);
-            _products.ReplaceOne(filter, product);
+            var productDbcontex = _productDbContext.Products.Find(id);
+            if(productDbcontex != null && id == productDbcontex.Id)
+            {
+                _productDbContext.Entry(productDbcontex).CurrentValues.SetValues(updateProduct);
+                _productDbContext.SaveChanges();
+            }
+             
+            
+            
         }
     }
 }
